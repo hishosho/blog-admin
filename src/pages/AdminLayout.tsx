@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Route, Link } from "react-router-dom";
 
 import BlogList from './blog/BlogList'
 import BlogEdit from './blog/BlogEdit'
+import BlogTag from './blog/BlogTag'
 import { Layout, Menu, Breadcrumb } from 'antd';
 import routes from '../router/index'
 import {
@@ -22,7 +23,11 @@ function AdminLayout() {
   return (
     <Router>
       <Layout style={{ minHeight: '100vh' }}>
-        <Sider collapsible collapsed={collapsed} onCollapse={onCollapse}>
+        <Sider
+          collapsible
+          collapsed={collapsed}
+          onCollapse={onCollapse}
+          >
           <div className={styles.logo}></div>
           
             <Menu theme="dark" defaultSelectedKeys={['1']} mode="inline">
@@ -56,10 +61,11 @@ function AdminLayout() {
               <Breadcrumb.Item>博客管理</Breadcrumb.Item>
               <Breadcrumb.Item>博客列表</Breadcrumb.Item>
             </Breadcrumb>
-            <div className="site-layout-background" style={{ padding: 24, minHeight: 360 }}>
+            <div className="site-layout-background" style={{ padding: 24, minHeight: 360, maxHeight: '80vh', overflow: 'auto' }}>
             <div>
               <Route path="/blog/list/" exact component={BlogList} />
-              <Route path="/blog/edit/" exact component={BlogEdit} />
+              <Route path="/blog/edit/" component={BlogEdit} />
+              <Route path="/blog/tag/" exact component={BlogTag} />
             </div>
             </div>
           </Content>

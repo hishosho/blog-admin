@@ -1,14 +1,15 @@
-import { Table, Tag, Space, Button, Popconfirm, message } from 'antd';
+import { Table, Space, Button, Popconfirm, message, Form, Modal, Input } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import { useState, useEffect, useCallback } from 'react';
-import { useHistory } from "react-router-dom";
 import BlogService from '../../services/BlogService'
-import data from '../../mock/BlogList'
+import data from '../../mock/BlogTag'
 
 
-function BlogList () {
-  let history = useHistory();
+function BlogTag () {
   const [ list, setList ] = useState<any>(null)
+  const [ visibleForm , setVisibleForm ] = useState<boolean>(false)
+  const [ form ] = Form.useForm()
+  const [ tagId, setTagId ] = useState<any>(null)
   const formatDate = (date: any) => {
     const time = new Date(date);
     const year = time.getFullYear()+'年';
@@ -20,8 +21,9 @@ function BlogList () {
       </>
     )
   }
-  const del = (record: API.BlogListItem) => {
-    // const { success, data } = BlogService.delBlogById(record.id)
+  const del = (record: API.Tag) => {
+    // const { success, data } = BlogService.delBlogTagById(record.id)
+    console.log('del=', record.id)
     message.success('删除成功！')
   }
   const columns = [
@@ -31,24 +33,14 @@ function BlogList () {
       key: 'id'
     },
     {
-      dataIndex: 'title',
-      title: '博客名称',
-      key: 'title'
+      dataIndex: 'name',
+      title: '标签名称',
+      key: 'name'
     },
     {
-      dataIndex: 'state',
-      title: '博客状态',
-      key: 'state'
-    },
-    {
-      dataIndex: 'order',
-      title: '博客排序',
-      key: 'order'
-    },
-    {
-      dataIndex: 'publishDate',
-      title: '发布日期',
-      key: 'publishDate',
+      dataIndex: 'createDate',
+      title: '创建日期',
+      key: 'createDate',
       render: (date: any) => formatDate(date)
     },
     {
@@ -56,22 +48,6 @@ function BlogList () {
       title: '更新日期',
       key: 'updateDate',
       render: (date: any) => formatDate(date)
-    },
-    {
-      dataIndex: 'tags',
-      title: '博客标签',
-      key: 'tags',
-      render: (tags: any) => (
-        <>
-          {tags.map((tag: any) => {
-            return (
-              <Tag color='green' key={tag.id}>
-                {tag.name}
-              </Tag>
-            );
-          })}
-        </>
-      ),
     },
     {
       title: '操作',
@@ -98,21 +74,35 @@ function BlogList () {
   ];
   
   const edit = (record?: any) => {
+    console.log('record=', record.id)
     if (record.id !== void 0) {
-      history.push({pathname: '/blog/edit', state: { id: record.id }})
+      setTimeout(() => form.setFieldsValue({
+        id: record.id,
+        name: record.name
+      }))
+      setTagId(record.id)
+      setVisibleForm(true)
     } else {
-      history.push('/blog/edit')
+      setTagId(null)
+      form.resetFields()
+      setVisibleForm(true)
     }
-    
   }
 
-  const getBlogList = useCallback(async() => {
+  const submit = (values: any) => {
+    console.log(tagId, values)
+    message.success(`${tagId !== null ? '修改' : '创建'}成功！`)
+    setVisibleForm(false)
+  }
+  
+
+  const getBlogTagList = useCallback(async() => {
     // const { success, data } = await BlogService.getBlogList()
     setList(data.rows)
   }, [])
 
   useEffect(() => {
-    getBlogList()
+    getBlogTagList()
   })
 
   return (
@@ -129,8 +119,36 @@ function BlogList () {
         columns={columns} 
         dataSource={list} 
         />
+      <Modal
+        visible={visibleForm}
+        title='编辑标签'
+        width={800}
+        onCancel={() => setVisibleForm(false)}
+        onOk={() => {
+          form
+            .validateFields()
+            .then((values: any) => {
+              form.resetFields()
+              form.setFieldsValue(values)
+              submit(values)
+            })
+        }}
+      >
+        <Form
+          form={form}
+          name="tagDetail"
+        >
+          <Form.Item
+            label='标签名称'
+            name='name'
+            rules={[{ required: true, message: '请输入标签名称' }]}
+          >
+            <Input />
+          </Form.Item>
+        </Form>
+      </Modal>
     </>
   )
 }
 
-export default BlogList
+export default BlogTag

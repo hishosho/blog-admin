@@ -25,6 +25,15 @@ const routes = [
         path: '/blog/edit',
         component: () => import('../pages/blog/BlogEdit'),
       },
+      {
+        key: '13',
+        name: 'blogTag',
+        meta: {
+          title: '博客标签管理',
+        },
+        path: '/blog/tag',
+        component: () => import('../pages/blog/BlogTag'),
+      },
     ]
   },
 ]

@@ -1,9 +1,11 @@
 import axios from 'axios'
 
 const result = (success: boolean, data: any, response: any) => {
-  success,
-  data,
-  response
+  return {
+    success,
+    data,
+    response
+  }
 }
 
 axios.interceptors.request.use((opt: any): any => {
