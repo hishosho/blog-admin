@@ -1,3 +1,7 @@
+import Index from '../pages/Index'
+import BlogList from '../pages/blog/BlogList'
+import BlogEdit from '../pages/blog/BlogEdit'
+import BlogTag from '../pages/blog/BlogTag'
 const routes = [
   {
     key: 'sub1',
@@ -5,6 +9,8 @@ const routes = [
     meta: {
       title: '博客管理',
     },
+    path: '/index',
+    component: Index,
     children: [
       {
         key: '11',
@@ -13,7 +19,7 @@ const routes = [
           title: '博客列表',
         },
         path: '/blog/list',
-        component: () => import('../pages/blog/BlogList'),
+        component: BlogList,
       },
       {
         key: '12',
@@ -23,7 +29,7 @@ const routes = [
           title: '博客编辑',
         },
         path: '/blog/edit',
-        component: () => import('../pages/blog/BlogEdit'),
+        component: BlogEdit,
       },
       {
         key: '13',
@@ -32,7 +38,7 @@ const routes = [
           title: '博客标签管理',
         },
         path: '/blog/tag',
-        component: () => import('../pages/blog/BlogTag'),
+        component: BlogTag,
       },
     ]
   },
