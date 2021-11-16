@@ -1,19 +1,32 @@
-import React , {useState} from 'react';
+import React, { useState } from 'react';
 import 'antd/dist/antd.css';
 import { Card, Input, Button ,Spin } from 'antd';
 import { UserOutlined, KeyOutlined } from '@ant-design/icons';
 import styles from './Login.module.css';
+import UserService from '../services/UserService';
+import nodeRSA from 'node-rsa';
+import publicKey from '../config';
 
 function Login(){
-  const [userName , setUserName] = useState('')
-  const [password , setPassword] = useState('')
-  const [isLoading, setIsLoading] = useState(false)
+  const [userName , setUserName] = useState('');
+  const [password , setPassword] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
-  const checkLogin = ()=>{
-    setIsLoading(true)
-    setTimeout(()=>{
-      setIsLoading(false)
-    }, 1000)
+  const checkLogin = async () => {
+    setIsLoading(true);
+    const key = new nodeRSA(publicKey);
+
+    key.setOptions({
+      encryptionScheme: 'pkcs1'
+    });
+    
+    const ret = await UserService.login({
+      userName,
+      password: key.encrypt(new Buffer(password), 'base64')
+    });
+    if (ret) {
+      setIsLoading(false);
+    }
   }
 
   return (
