@@ -11,6 +11,7 @@ function Login(){
   const [userName , setUserName] = useState('');
   const [password , setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [isRegister, setIsRegister] = useState(false)
 
   const checkLogin = async () => {
     setIsLoading(true);
@@ -20,7 +21,7 @@ function Login(){
       encryptionScheme: 'pkcs1'
     });
     
-    const ret = await UserService.login({
+    const ret = await UserService[isRegister ? 'register' : 'login']({
       userName,
       password: key.encrypt(new Buffer(password), 'base64')
     });
@@ -29,10 +30,23 @@ function Login(){
     }
   }
 
+  const register = () => {
+    const changeSubmitType = () => {
+      setIsRegister(!isRegister)
+    }
+    return (
+      <Button
+        size="small"
+        type="link"
+        onClick={() => changeSubmitType()}>{isRegister ? '已有账户登录' : '注册新账户'}
+      </Button>
+    )
+  }
+
   return (
     <div className={styles.loginWrap}>
       <Spin tip="Loading..." spinning={isLoading}>
-        <Card title="blog System" bordered={true} style={{ width: 400 }} >
+        <Card title="blog System" bordered={true} style={{ width: 400 }} extra={register()} >
           <Input
             id="userName"
             size="large"
@@ -50,7 +64,7 @@ function Login(){
             onChange={(e)=>{setPassword(e.target.value)}}
           />     
           <br/><br/>
-          <Button type="primary" size="large" block onClick={checkLogin} > Login in </Button>
+          <Button type="primary" size="large" block onClick={checkLogin} >{isRegister ? '注册' : '登录'}</Button>
         </Card>
       </Spin>
     </div>

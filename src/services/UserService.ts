@@ -9,7 +9,10 @@ const UserService = {
   // getPublicKey: () => {
   //   return axios.get('users/publicKey')
   // },
-  login: (user: User ) => {
+  register: (user: User) => {
+    return axios.post('users/register', user)
+  },
+  login: (user: User) => {
     return axios.post('users/login', user)
   }
 }
