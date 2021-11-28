@@ -1,13 +1,15 @@
 import React, { useState } from 'react';
 import 'antd/dist/antd.css';
-import { Card, Input, Button ,Spin } from 'antd';
+import { Card, Input, Button ,Spin, message } from 'antd';
 import { UserOutlined, KeyOutlined } from '@ant-design/icons';
 import styles from './Login.module.css';
 import UserService from '../services/UserService';
 import nodeRSA from 'node-rsa';
 import publicKey from '../config';
+import { useHistory } from "react-router-dom";
 
 function Login(){
+  const history = useHistory();
   const [userName , setUserName] = useState('');
   const [password , setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -21,12 +23,15 @@ function Login(){
       encryptionScheme: 'pkcs1'
     });
     
-    const ret = await UserService[isRegister ? 'register' : 'login']({
+    const ret: any = await UserService[isRegister ? 'register' : 'login']({
       userName,
       password: key.encrypt(new Buffer(password), 'base64')
     });
-    if (ret) {
-      setIsLoading(false);
+    setIsLoading(false)
+    if (ret.success) {
+      history.push('/index')
+    } else {
+      message.error(ret.data)
     }
   }
 

@@ -40,16 +40,18 @@ function BlogEdit () {
   }
 
   const getBlogDetail = useCallback(async() => {
-    // const { success, data } = await BlogService.getBlogDetailById(location.state.id)
-    form.setFieldsValue({
-      title: detail.title,
-      desc: detail.desc,
-      content: detail.content,
-      tags: [1, 2, 3]
-    })
-    const html=marked(detail.content)
-    setMarkdownContent(html)
-  }, [form])
+    const { success, data }: any = await BlogService.getBlogDetailById(location.state.id)
+    if (success) {
+      form.setFieldsValue({
+        title: data.title,
+        desc: data.desc,
+        content: data.content,
+        tags: data.tags
+      })
+      const html=marked(data.content)
+      setMarkdownContent(html)
+    }
+  }, [])
 
   const submit = (values: any) => {
     if (location.state) {

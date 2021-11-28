@@ -28,11 +28,16 @@ axios.interceptors.request.use((opt: any): any => {
 
 axios.interceptors.response.use(
   (res: any) => {
+    console.log(res)
     return result(true, res.data.code ? res.data.data : res.data.message, res)
   },
   (err) => {
+    if (err.response && err.response.status === 403) {
+      window.location.href='http://127.0.0.1:9000/login/'
+      return
+    }
     if (err.response && err.response.status === 404) {
-      return result(true, {}, err)
+      return result(false, {}, err)
     }
     const errMsg = err.message || '请求失败'
     return result(false, errMsg, err)

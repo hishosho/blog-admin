@@ -21,8 +21,11 @@ function BlogList () {
     )
   }
   const del = (record: API.BlogListItem) => {
-    // const { success, data } = BlogService.delBlogById(record.id)
-    message.success('删除成功！')
+    const { success }: any = BlogService.delBlogById(record.id)
+    if (success) {
+      message.success('删除成功！')
+      getBlogList()
+    }
   }
   const columns = [
     {
@@ -107,13 +110,16 @@ function BlogList () {
   }
 
   const getBlogList = useCallback(async() => {
-    // const { success, data } = await BlogService.getBlogList()
-    setList(data.rows)
+    const { success, data }: any = await BlogService.getBlogList()
+    console.log('data-', data)
+    if (success) {
+      setList(data.rows)
+    }
   }, [])
 
   useEffect(() => {
     getBlogList()
-  })
+  }, [])
 
   return (
     <>
