@@ -1,4 +1,4 @@
-import { Table, Tag, Space, Button, Popconfirm, message } from 'antd';
+import { Table, Tag, Space, Button, Popconfirm, message, Spin } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import { useState, useEffect, useCallback } from 'react';
 import { useHistory } from "react-router-dom";
@@ -9,6 +9,7 @@ import data from '../../mock/BlogList'
 function BlogList () {
   let history = useHistory();
   const [ list, setList ] = useState<any>(null)
+  const [isLoading, setIsLoading] = useState<boolean>(false)
   const formatDate = (date: any) => {
     const time = new Date(date);
     const year = time.getFullYear()+'年';
@@ -20,8 +21,10 @@ function BlogList () {
       </>
     )
   }
-  const del = (record: API.BlogListItem) => {
-    const { success }: any = BlogService.delBlogById(record.id)
+  const del = async (record: API.BlogListItem) => {
+    setIsLoading(true)
+    const { success }: any = await BlogService.delBlogById(record.id)
+    setIsLoading(false)
     if (success) {
       message.success('删除成功！')
       getBlogList()
@@ -39,9 +42,14 @@ function BlogList () {
       key: 'title'
     },
     {
-      dataIndex: 'state',
+      dataIndex: 'status',
       title: '博客状态',
-      key: 'state'
+      key: 'status',
+      render: (status: number) =>(
+        <>
+         <span>{status === 2 ? '已上线' : '已下线' }</span>
+        </>
+      )
     },
     {
       dataIndex: 'order',
@@ -82,10 +90,20 @@ function BlogList () {
       render: (text: any, record: any) => (
         <Space size="middle">
           <Button
+            type="text"
             onClick={() => edit(record)}
           >
             修改
           </Button>
+          <Popconfirm
+            placement="rightBottom"
+            title='确定上线该博客？'
+            onConfirm={() => changeStatus(record, record.status === 2 ? 1 : 2)}
+            okText="Yes"
+            cancelText="No"
+            >
+            <Button type={record.status === 2 ? 'text' : 'link'}>{record.status === 2 ? '下线' : '上线'}</Button>
+          </Popconfirm>
           <Popconfirm
             placement="rightBottom"
             title='确定删除该数据？'
@@ -93,20 +111,31 @@ function BlogList () {
             okText="Yes"
             cancelText="No"
             >
-            <Button>删除</Button>
+            <Button type="text">删除</Button>
           </Popconfirm>
         </Space>
       ),
     },
   ];
   
-  const edit = (record?: any) => {
+  const edit = (record: any) => {
     if (record.id !== void 0) {
       history.push({pathname: '/blog/edit', state: { id: record.id }})
     } else {
       history.push('/blog/edit')
     }
-    
+  }
+
+  const changeStatus = async (record: any, status: number) => {
+    setIsLoading(true)
+    const { success }: any = await BlogService.updateBlog(Object.assign({}, record, { status }))
+    BlogService.updateBlog()
+    setIsLoading(false)
+    if (success) {
+      message.success('操作成功')
+    } else {
+      message.error('操作失败，请稍后重试')
+    }
   }
 
   const getBlogList = useCallback(async() => {
@@ -123,18 +152,20 @@ function BlogList () {
 
   return (
     <>
-      <Button
-        type="primary"
-        icon={<PlusOutlined />}
-        style={{ margin: '20px' }}
-        onClick={edit}
-        > 
-        新建
-      </Button>
-      <Table 
-        columns={columns} 
-        dataSource={list} 
-        />
+      <Spin tip="Loading..." spinning={isLoading}>
+        <Button
+          type="primary"
+          icon={<PlusOutlined />}
+          style={{ margin: '20px' }}
+          onClick={edit}
+          > 
+          新建
+        </Button>
+        <Table 
+          columns={columns}
+          dataSource={list} 
+          />
+      </Spin>
     </>
   )
 }

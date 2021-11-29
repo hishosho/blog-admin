@@ -1,13 +1,17 @@
-import { Table, Space, Button, Popconfirm, message, Form, Modal, Input } from 'antd';
+import { Table, Space, Button, Popconfirm, message, Form, Modal, Input, Spin } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import { useState, useEffect, useCallback } from 'react';
 import BlogService from '../../services/BlogService'
 import data from '../../mock/BlogTag'
 
-
+interface Fn {
+  name: string;
+  label: string;
+}
 function BlogTag () {
   const [ list, setList ] = useState<any>(null)
   const [ visibleForm , setVisibleForm ] = useState<boolean>(false)
+  const [isLoading, setIsLoading] = useState<boolean>(false)
   const [ form ] = Form.useForm()
   const [ tagId, setTagId ] = useState<any>(null)
   const formatDate = (date: any) => {
@@ -21,10 +25,17 @@ function BlogTag () {
       </>
     )
   }
-  const del = (record: API.Tag) => {
-    // const { success, data } = BlogService.delBlogTagById(record.id)
-    console.log('del=', record.id)
-    message.success('删除成功！')
+  const del = async (record: API.Tag) => {
+    setIsLoading(true)
+    const { success }: any = await BlogService.delBlogTagById(record.id)
+    setIsLoading(false)
+    if (success) {
+      message.success('删除成功！')
+      getBlogTagList()
+    } else {
+      message.error('删除失败，请稍后再试')
+    }
+    
   }
   const columns = [
     {
@@ -74,7 +85,6 @@ function BlogTag () {
   ];
   
   const edit = (record?: any) => {
-    console.log('record=', record.id)
     if (record.id !== void 0) {
       setTimeout(() => form.setFieldsValue({
         id: record.id,
@@ -83,30 +93,40 @@ function BlogTag () {
       setTagId(record.id)
       setVisibleForm(true)
     } else {
-      setTagId(null)
+      setTagId(void 0)
       form.resetFields()
       setVisibleForm(true)
     }
   }
 
-  const submit = (values: any) => {
-    console.log(tagId, values)
-    message.success(`${tagId !== null ? '修改' : '创建'}成功！`)
+  const submit = async (values: any) => {
+    setIsLoading(true)
+    const fn: Fn = {
+      name: tagId !== void 0 ? 'update' : 'create',
+      label: tagId !== void 0 ? '修改' : '创建'
+    }
+   
+    const { success }: any = await BlogService[`${fn.name}Tag`](Object.assign(values, {id: tagId }))
+    setIsLoading(false)
+    success ? message.success(`${fn.label}成功`) : message.error(`${fn.label}失败，请稍后重试`)
     setVisibleForm(false)
+    getBlogTagList()
   }
   
-
   const getBlogTagList = useCallback(async() => {
-    // const { success, data } = await BlogService.getBlogList()
-    setList(data.rows)
+    const { success, data }:any = await BlogService.getBlogTagList()
+    if (success) {
+      setList(data.rows)
+    }
   }, [])
 
   useEffect(() => {
     getBlogTagList()
-  })
+  }, [])
 
   return (
     <>
+    <Spin tip="Loading..." spinning={isLoading}>
       <Button
         type="primary"
         icon={<PlusOutlined />}
@@ -130,6 +150,7 @@ function BlogTag () {
             .then((values: any) => {
               form.resetFields()
               form.setFieldsValue(values)
+              setVisibleForm(false)
               submit(values)
             })
         }}
@@ -147,6 +168,7 @@ function BlogTag () {
           </Form.Item>
         </Form>
       </Modal>
+      </Spin>
     </>
   )
 }

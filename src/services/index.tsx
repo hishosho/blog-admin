@@ -29,7 +29,7 @@ axios.interceptors.request.use((opt: any): any => {
 axios.interceptors.response.use(
   (res: any) => {
     console.log(res)
-    return result(true, res.data.code ? res.data.data : res.data.message, res)
+    return result(res.data.code, res.data.code ? res.data.data : res.data.message, res)
   },
   (err) => {
     if (err.response && err.response.status === 403) {
