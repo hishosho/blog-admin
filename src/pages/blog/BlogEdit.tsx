@@ -50,12 +50,15 @@ function BlogEdit () {
 
   const getBlogDetail = useCallback(async(id) => {
     const { success, data }: any = await BlogService.getBlogDetailById(id)
+    const tagIds = data.tags.map((tagId: string) => {
+      return parseInt(tagId)
+    })
     if (success) {
       form.setFieldsValue({
         title: data.title,
         desc: data.desc,
         content: data.content,
-        tags: data.tags
+        tags: tagIds
       })
       const html=marked(data.content)
       setMarkdownContent(html)

@@ -9,7 +9,7 @@ const BlogService: { [key: string]: any } = {
   delBlogById: (id: number) => axios({ url: `/blogs/blog/${id}`, method: 'delete' }),
   delBlogTagById: (id: number) => axios({ url: `tags/tag/${id}`, method: 'delete' }),
   createBlog: (data: any) => axios({ url: '/blogs/create', data, method: 'post' }),
-  updateBlog: (data: any) => axios({ url: '/blogs/update', data, method: 'put' }),
+  updateBlog: (data: any) => axios({ url: `/blogs/update/${data.id}`, data, method: 'put' }),
   createTag: (data: any) => axios({ url: '/tags/create', data, method: 'post' }),
   updateTag: (data: any) => axios({ url: '/tags/update', data, method: 'put' }),
 }

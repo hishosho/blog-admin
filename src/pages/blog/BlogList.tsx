@@ -133,8 +133,8 @@ function BlogList () {
   ];
   
   const edit = (record: any) => {
-    if (record.id !== void 0) {
-      history.push({pathname: '/blog/edit', state: { id: record.id }})
+    if (record._id !== void 0) {
+      history.push({pathname: '/blog/edit', state: { id: record._id }})
     } else {
       history.push('/blog/edit')
     }
