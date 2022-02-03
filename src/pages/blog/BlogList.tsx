@@ -61,7 +61,7 @@ function BlogList () {
       key: 'status',
       render: (status: number) =>(
         <>
-         <span>{status === 2 ? '已上线' : '已下线' }</span>
+         <span style={{color: status === 2 ? '#1fd51f' : ''}}>{status === 2 ? '已上线' : '已下线' }</span>
         </>
       )
     },
@@ -112,7 +112,7 @@ function BlogList () {
           <Popconfirm
             placement="rightBottom"
             title='确定上线该博客？'
-            onConfirm={() => changeStatus(record, record.status === 2 ? 1 : 2)}
+            onConfirm={() => changeStatus(record, record.status === 2 ? 1 : 2).then(() => getBlogList())}
             okText="Yes"
             cancelText="No"
             >
@@ -142,8 +142,7 @@ function BlogList () {
 
   const changeStatus = async (record: any, status: number) => {
     setIsLoading(true)
-    const { success }: any = await BlogService.updateBlog(Object.assign({}, record, { status }))
-    BlogService.updateBlog()
+    const { success }: any = await BlogService.updateBlog(Object.assign({}, {id: record._id}, { status }))
     setIsLoading(false)
     if (success) {
       message.success('操作成功')
