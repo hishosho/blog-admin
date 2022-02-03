@@ -3,8 +3,10 @@
 
 declare namespace API {
   type Tag = {
-    id: number;
+    _id: number;
     name: string;
+    create_date: string;
+    update_date: string;
   }
   type TagList = {
     rows: Tag[];

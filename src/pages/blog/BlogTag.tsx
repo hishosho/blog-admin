@@ -33,7 +33,7 @@ function BlogTag () {
   }
   const del = async (record: API.Tag) => {
     setIsLoading(true)
-    const { success }: any = await BlogService.delBlogTagById(record.id)
+    const { success }: any = await BlogService.delBlogTagById(record._id)
     setIsLoading(false)
     if (success) {
       message.success('删除成功！')
@@ -91,12 +91,12 @@ function BlogTag () {
   ];
   
   const edit = (record?: any) => {
-    if (record.id !== void 0) {
+    if (record._id !== void 0) {
       setTimeout(() => form.setFieldsValue({
-        id: record.id,
+        id: record._id,
         name: record.name
       }))
-      setTagId(record.id)
+      setTagId(record._id)
       setVisibleForm(true)
     } else {
       setTagId(void 0)
