@@ -22,6 +22,7 @@ const dbIndex = {
 
 function BlogList () {
   let history = useHistory();
+  const [ blogTags, setBlogTags ] = useState<any>(null)
   const [ list, setList ] = useState<any>(null)
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const formatDate = (date: any) => {
@@ -89,10 +90,10 @@ function BlogList () {
       key: 'tags',
       render: (tags: any) => (
         <>
-          {tags.map((tag: any) => {
+          {tags.map((tagId: number) => {
             return (
-              <Tag color='green' key={tag.id}>
-                {tag.name}
+              <Tag color='green' key={tagId}>
+                {blogTags[tagId].name}
               </Tag>
             );
           })}
@@ -150,7 +151,7 @@ function BlogList () {
     if (status === 2) {
       params.publishDate = new Date()
     }
-    const { success }: any = await BlogService.updateBlog(params)
+    const { success }: any = await BlogService.updateBlog(Object.assign(record, params))
     setIsLoading(false)
     if (success) {
       message.success('操作成功')
@@ -166,7 +167,20 @@ function BlogList () {
     }
   }, [])
 
+  const getBlogTags = useCallback(async() => {
+    const { success, data }: any = await BlogService.getBlogTagList()
+    if (success) {
+      const tagsMap: any = {}
+      data.map((tag: API.Tag) => {
+        console.log('tag=', tag)
+        tagsMap[tag._id] = tag
+      })
+      setBlogTags(tagsMap)
+    }
+  }, [])
+
   useEffect(() => {
+    getBlogTags()
     getBlogList()
   }, [])
 
