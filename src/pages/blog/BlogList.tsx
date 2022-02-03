@@ -25,6 +25,7 @@ function BlogList () {
   const [ list, setList ] = useState<any>(null)
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const formatDate = (date: any) => {
+    if (!date) return ''
     const time = new Date(date);
     const year = time.getFullYear()+'年';
     const month = time.getMonth()+1+'月';
@@ -103,12 +104,12 @@ function BlogList () {
       key: 'action',
       render: (text: any, record: any) => (
         <Space size="middle">
-          <Button
+          {record.status !== 2 && (<Button
             type="text"
             onClick={() => edit(record)}
           >
             修改
-          </Button>
+          </Button>)}
           <Popconfirm
             placement="rightBottom"
             title='确定上线该博客？'
@@ -142,7 +143,14 @@ function BlogList () {
 
   const changeStatus = async (record: any, status: number) => {
     setIsLoading(true)
-    const { success }: any = await BlogService.updateBlog(Object.assign({}, {id: record._id}, { status }))
+    const params: any = {
+      id: record._id,
+      status
+    }
+    if (status === 2) {
+      params.publishDate = new Date()
+    }
+    const { success }: any = await BlogService.updateBlog(params)
     setIsLoading(false)
     if (success) {
       message.success('操作成功')
