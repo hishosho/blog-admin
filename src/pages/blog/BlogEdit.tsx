@@ -1,4 +1,5 @@
 import React, { useState, useCallback, useEffect } from 'react'
+import { useHistory } from "react-router-dom";
 import { useLocation } from 'react-router-dom'
 import hljs from './highlight.js'
 import 'highlight.js/styles/monokai-sublime.css'
@@ -15,6 +16,7 @@ interface Fn {
 }
 
 function BlogEdit () {
+  let history = useHistory();
   const [tagOptions, setTagOptions] = useState<API.Tag[]>([])
   const [markdownContent, setMarkdownContent] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false)
@@ -77,7 +79,13 @@ function BlogEdit () {
         }
         const { success }: any = await BlogService[`${fn.name}Blog`](Object.assign(values, {id: location.state && location.state.id }))
         setIsLoading(false)
-        success ? message.success(`${fn.label}成功`) : message.error(`${fn.label}失败，请稍后重试`)
+        if (success) {
+          message.success(`${fn.label}成功`)
+          setTimeout(() => { history.push('/blog/list') }, 200)
+        } else {
+          message.error(`${fn.label}失败，请稍后重试`)
+        }
+
       })
   }
 
