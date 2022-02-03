@@ -57,6 +57,7 @@ function BlogEdit () {
     })
     if (success) {
       form.setFieldsValue({
+        order: data.order,
         title: data.title,
         desc: data.desc,
         content: data.content,
@@ -128,6 +129,12 @@ function BlogEdit () {
         <Form.Item name="title" label="博客标题" rules={[{ required: true, message: '请填写博客标题!' }]}>
           <Input
             placeholder="请输入博客标题"
+          />
+        </Form.Item>
+        <Form.Item name="order" label="博客排序">
+          <Input
+            type="number"
+            placeholder="请输入博客排序"
           />
         </Form.Item>
         <Form.Item name="tags" label="博客标签" rules={[{ required: true, message: '请填写博客标签!' }]}>
