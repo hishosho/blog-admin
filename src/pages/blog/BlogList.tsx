@@ -35,9 +35,9 @@ function BlogList () {
       </>
     )
   }
-  const del = async (record: API.BlogListItem) => {
+  const del = async (record: API.Blog) => {
     setIsLoading(true)
-    const { success }: any = await BlogService.delBlogById(record.id)
+    const { success }: any = await BlogService.delBlogById(record._id)
     setIsLoading(false)
     if (success) {
       message.success('删除成功！')
