@@ -2,11 +2,17 @@ import { Table, Space, Button, Popconfirm, message, Form, Modal, Input, Spin } f
 import { PlusOutlined } from '@ant-design/icons';
 import { useState, useEffect, useCallback } from 'react';
 import BlogService from '../../services/BlogService'
-import data from '../../mock/BlogTag'
 
 interface Fn {
   name: string;
   label: string;
+}
+
+const dbIndex = {
+  id: '_id',
+  name: 'name',
+  createDate: 'create_date',
+  updateDate: 'update_date'
 }
 function BlogTag () {
   const [ list, setList ] = useState<any>(null)
@@ -39,23 +45,23 @@ function BlogTag () {
   }
   const columns = [
     {
-      dataIndex: 'id',
+      dataIndex: dbIndex.id,
       title: '序号',
       key: 'id'
     },
     {
-      dataIndex: 'name',
+      dataIndex: dbIndex.name,
       title: '标签名称',
       key: 'name'
     },
     {
-      dataIndex: 'createDate',
+      dataIndex: dbIndex.createDate,
       title: '创建日期',
       key: 'createDate',
       render: (date: any) => formatDate(date)
     },
     {
-      dataIndex: 'updateDate',
+      dataIndex: dbIndex.updateDate,
       title: '更新日期',
       key: 'updateDate',
       render: (date: any) => formatDate(date)
@@ -116,7 +122,7 @@ function BlogTag () {
   const getBlogTagList = useCallback(async() => {
     const { success, data }:any = await BlogService.getBlogTagList()
     if (success) {
-      setList(data.rows)
+      setList(data)
     }
   }, [])
 
