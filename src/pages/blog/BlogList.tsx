@@ -5,6 +5,20 @@ import { useHistory } from "react-router-dom";
 import BlogService from '../../services/BlogService'
 import data from '../../mock/BlogList'
 
+const dbIndex = {
+  id: '_id',
+  title: 'title',
+  desc: 'desc',
+  tags: 'tags',
+  visitCount: 'visit_count',
+  admireCount: 'admire_count',
+  status: 'status',
+  order: 'order',
+  publishDate: 'publish_date',
+  content: 'content',
+  createDate: 'create_date',
+  updateDate: 'update_date'
+}
 
 function BlogList () {
   let history = useHistory();
@@ -32,17 +46,17 @@ function BlogList () {
   }
   const columns = [
     {
-      dataIndex: 'id',
+      dataIndex: dbIndex.id,
       title: '序号',
       key: 'id'
     },
     {
-      dataIndex: 'title',
+      dataIndex: dbIndex.title,
       title: '博客名称',
       key: 'title'
     },
     {
-      dataIndex: 'status',
+      dataIndex: dbIndex.status,
       title: '博客状态',
       key: 'status',
       render: (status: number) =>(
@@ -52,24 +66,24 @@ function BlogList () {
       )
     },
     {
-      dataIndex: 'order',
+      dataIndex: dbIndex.order,
       title: '博客排序',
       key: 'order'
     },
     {
-      dataIndex: 'publishDate',
+      dataIndex: dbIndex.publishDate,
       title: '发布日期',
       key: 'publishDate',
       render: (date: any) => formatDate(date)
     },
     {
-      dataIndex: 'updateDate',
+      dataIndex: dbIndex.updateDate,
       title: '更新日期',
       key: 'updateDate',
       render: (date: any) => formatDate(date)
     },
     {
-      dataIndex: 'tags',
+      dataIndex: dbIndex.tags,
       title: '博客标签',
       key: 'tags',
       render: (tags: any) => (
@@ -140,9 +154,8 @@ function BlogList () {
 
   const getBlogList = useCallback(async() => {
     const { success, data }: any = await BlogService.getBlogList()
-    console.log('data-', data)
     if (success) {
-      setList(data.rows)
+      setList(data)
     }
   }, [])
 

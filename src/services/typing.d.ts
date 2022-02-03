@@ -24,19 +24,22 @@ declare namespace API {
     updateDate: number;
   }
   type BlogList = {
-    data?: BlogListItem[];
+    data?: Blog[];
     total?: number;
     success?: boolean;
   }
   type Blog = {
-    id: number;
+    _id: number;
     title: string;
     desc: string;
     content: string;
-    tags: Tag[];
-    admireCount: number;
-    visitCount: number;
-    publishDate: number;
+    tags: string[];
+    order: number;
+    admire_count: number;
+    visit_count: number;
+    status: number;
+    publish_date: number;
+    
   }
   type PageParams = {
     current?: number;

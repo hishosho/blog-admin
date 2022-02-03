@@ -15,6 +15,7 @@ interface Fn {
 }
 
 function BlogEdit () {
+  const [tagOptions, setTagOptions] = useState<API.Tag[]>([])
   const [markdownContent, setMarkdownContent] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [ form ] = Form.useForm()
@@ -36,13 +37,15 @@ function BlogEdit () {
     })
   }, [])
 
-  const buildBlogTagOptions = () => {
-    // const { success, data } = await BlogService.getBlogList()
+  const buildBlogTagOptions = async () => {
+    const { success, data } = await BlogService.getBlogTagList()
     const tagOptions: any = []
-    data.rows.map((row: any) => {
-      tagOptions.push(<Select.Option key={row.id} value={row.id}>{row.name}</Select.Option>)
-    })
-    return tagOptions
+    if (success) {
+      data.map((tag: API.Tag) => {
+        tagOptions.push(<Select.Option key={tag._id} value={tag._id}>{tag.name}</Select.Option>)
+      })
+      setTagOptions(tagOptions)
+    }
   }
 
   const getBlogDetail = useCallback(async(id) => {
@@ -91,6 +94,7 @@ function BlogEdit () {
   }
 
   useEffect(() => {
+    buildBlogTagOptions()
     buildArticleContent()
     if (location.state) {
       getBlogDetail(location.state.id)
@@ -121,7 +125,7 @@ function BlogEdit () {
             allowClear
             placeholder="请选择博客标签"
           >
-            {buildBlogTagOptions()}
+            {tagOptions}
           </Select>
         </Form.Item>
         <Form.Item name="desc" label="博客简介">
