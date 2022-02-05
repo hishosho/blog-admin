@@ -82,12 +82,11 @@ function BlogEdit () {
         setIsLoading(false)
         if (success) {
           message.success(`${fn.label}成功`)
-          setTimeout(() => { history.push('/blog/list') }, 200)
         } else {
           message.error(`${fn.label}失败，请稍后重试`)
         }
-
       })
+      .then(() => { history.push('/blog/list') })
   }
 
   const goSubmit = () => {
