@@ -1,4 +1,7 @@
 import axios from 'axios'
+import { createBrowserHistory } from 'history';
+
+const history = createBrowserHistory();
 
 const result = (success: boolean, data: any, response: any) => {
   return {
@@ -8,7 +11,8 @@ const result = (success: boolean, data: any, response: any) => {
   }
 }
 
-axios.defaults.baseURL = 'http://127.0.0.1:3000'
+// axios.defaults.baseURL = 'http://127.0.0.1:3000'
+axios.defaults.baseURL = '/api'
 axios.defaults.withCredentials = true
 
 axios.interceptors.request.use((opt: any): any => {
@@ -28,13 +32,13 @@ axios.interceptors.request.use((opt: any): any => {
 
 axios.interceptors.response.use(
   (res: any) => {
-    console.log(res)
     return result(res.data.code, res.data.code ? res.data.data : res.data.message, res)
   },
   (err) => {
     if (err.response && err.response.status === 403) {
-      window.location.href='http://127.0.0.1:9000/login/'
-      return
+      history.push('/login')
+      // window.location.href='http://127.0.0.1:9000/login/'
+      return result(false, {}, err)
     }
     if (err.response && err.response.status === 404) {
       return result(false, {}, err)
