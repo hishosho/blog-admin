@@ -51,7 +51,7 @@ function Login(){
   return (
     <div className={styles.loginWrap}>
       <Spin tip="Loading..." spinning={isLoading}>
-        <Card title="blog System" bordered={true} style={{ width: 400 }} extra={register()} >
+        <Card title="blog System" bordered={true} style={{ width: 400 }} >
           <Input
             id="userName"
             size="large"
